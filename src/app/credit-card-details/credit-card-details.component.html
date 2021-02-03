@@ -1,0 +1,39 @@
+<div class="justify-content-center">
+    <h2 class="text-center">Credit Card Details</h2>
+</div>
+<div class="jumbotron d-flex align-items-center">
+    <div class="container">
+        <form [formGroup]="creditCardForm" (ngSubmit)="submitDetails()">
+            <div class="row">
+                <label for="cc-num" class="col-3">Credit Card Number</label>
+                <input id="cc-num" class="col-5" type="text" formControlName="ccNum" />
+                <span class="wrong-control"
+                    *ngIf="creditCardForm?.controls?.ccNum?.dirty && !!creditCardForm?.controls?.ccNum?.errors">&times;</span>
+            </div>
+            <div class="row">
+                <label for="cc-holder" class="col-3">Card Holder</label>
+                <input id="cc-holder" class="col-5" type="text" maxlength="25" formControlName="ccHolder" />
+                <span class="wrong-control"
+                    *ngIf="creditCardForm?.controls?.ccHolder?.dirty && !!creditCardForm?.controls?.ccHolder?.errors">&times;</span>
+            </div>
+            <div class="row">
+                <label for="cc-exp" class="col-3">Expiration Date</label>
+                <input id="cc-exp" class="col-3" type="date" formControlName="ccExpDate" />
+                <span class="wrong-control"
+                    *ngIf="creditCardForm?.controls?.ccExpDate?.dirty && !!creditCardForm?.controls?.ccExpDate?.errors">&times;</span>
+            </div>
+            <div class="row">
+                <label for="cc-cvv" class="col-3">Security Code - CVV</label>
+                <input id="cc-cvv" class="col-1" type="text" maxlength="3" formControlName="ccCvv" />
+                <span class="wrong-control"
+                    *ngIf="creditCardForm?.controls?.ccCvv?.dirty && !!creditCardForm?.controls?.ccCvv?.errors">&times;</span>
+            </div>
+            <div class="row">
+                <label for="cc-amt" class="col-3">Amount</label>
+                <input id="cc-amt" class="col-4" type="number" formControlName="ccAmt" />
+                <span class="wrong-control" *ngIf="creditCardForm?.controls?.ccAmt?.dirty && !!creditCardForm?.controls?.ccAmt?.errors">&times;</span>
+            </div>
+            <button type="submit" class="align-items-center" [disabled]="!creditCardForm.valid">Submit</button>
+        </form>
+    </div>
+</div>
