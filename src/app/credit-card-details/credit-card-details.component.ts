@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { select, Store } from '@ngrx/store';
+import { SubmitCCDetails } from '../ccDetailsActions';
+import { CCDetails, CCDetailsInitial } from '../ccDetailsModel';
+import * as ccDetailsReducer from '../ccDetailsReducer';
 
 @Component({
   selector: 'app-credit-card-details',
@@ -16,9 +20,13 @@ export class CreditCardDetailsComponent implements OnInit {
     ccAmt: new FormControl(null, [Validators.nullValidator, Validators.min(1), Validators.required])
   });
 
-  constructor() { }
+  constructor(private store: Store<CCDetailsInitial>) { }
 
   ngOnInit(): void {
+    this.store.select(ccDetailsReducer.selectStateCCDetails)
+      .subscribe((data) => {
+        console.log(data);
+      });
   }
 
   private expiryDateCheck(ctrl: AbstractControl): { dateErr: boolean } | null {
@@ -26,7 +34,14 @@ export class CreditCardDetailsComponent implements OnInit {
   }
 
   submitDetails() {
-
+    this.store.dispatch(SubmitCCDetails({
+      data: {
+        ccAmt: this.creditCardForm.controls.ccAmt.value,
+        ccNum: this.creditCardForm.controls.ccNum.value,
+        ccHolder: this.creditCardForm.controls.ccHolder.value,
+        ccCvv: this.creditCardForm.controls.ccCvv.value,
+        ccExpDate: this.creditCardForm.controls.ccExpDate.value,
+      }
+    }));
   }
-
 }
