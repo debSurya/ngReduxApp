@@ -13,6 +13,7 @@ export class CreditCardDetailsService {
   private passCCDetailsSub = new BehaviorSubject<CCDetails | null>(null);
 
   saveCCDetails(ccDetails: CCDetails) {
+    //mocking the POST call for saving credit card details API
     return of({ data: { ...ccDetails, new: true } }).pipe(delay(1000));
   }
 

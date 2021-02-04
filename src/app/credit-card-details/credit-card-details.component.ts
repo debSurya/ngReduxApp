@@ -39,7 +39,6 @@ export class CreditCardDetailsComponent implements OnInit {
       .subscribe((data: { success: CCDetails }) => {
         if (!!data.success.new) {
           this.ngxLoaderService.stopAll();
-          console.log(data.success);
           this.backdropLoader = true;
           const toastrMethod = this.toasterService.success(`<h4 class="text-center pr-2"><i> SUCCESS!! </i></h4>`);
           const navToSaveDetails = toastrMethod.onHidden.subscribe(() => {
