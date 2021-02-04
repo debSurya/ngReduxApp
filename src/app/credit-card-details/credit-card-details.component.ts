@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
-import { SubmitCCDetails } from '../ccDetailsActions';
+import { SubmitCCDetails, ResetCCDetails } from '../ccDetailsActions';
 import { CCDetails, CCDetailsInitial } from '../ccDetailsModel';
 import * as ccDetailsReducer from '../ccDetailsReducer';
 import { CreditCardDetailsService } from '../services/credit-card-details.service';
@@ -40,6 +40,7 @@ export class CreditCardDetailsComponent implements OnInit {
         if (!!data.success.new) {
           this.ngxLoaderService.stopAll();
           this.backdropLoader = true;
+          this.store.dispatch(ResetCCDetails());
           const toastrMethod = this.toasterService.success(`<h4 class="text-center pr-2"><i> SUCCESS!! </i></h4>`);
           const navToSaveDetails = toastrMethod.onHidden.subscribe(() => {
             this.ccService.sendCCDetailsSaveData(data.success);
