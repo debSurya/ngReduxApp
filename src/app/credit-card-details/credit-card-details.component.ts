@@ -1,9 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
-import { select, Store } from '@ngrx/store';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+
 import { SubmitCCDetails } from '../ccDetailsActions';
 import { CCDetails, CCDetailsInitial } from '../ccDetailsModel';
 import * as ccDetailsReducer from '../ccDetailsReducer';
+import { CreditCardDetailsService } from '../services/credit-card-details.service';
 
 @Component({
   selector: 'app-credit-card-details',
@@ -12,6 +17,12 @@ import * as ccDetailsReducer from '../ccDetailsReducer';
 })
 export class CreditCardDetailsComponent implements OnInit {
 
+  constructor(private store: Store<CCDetailsInitial>,
+    private toasterService: ToastrService,
+    private router: Router,
+    private ccService: CreditCardDetailsService,
+    private ngxLoaderService: NgxUiLoaderService) { }
+
   creditCardForm: FormGroup = new FormGroup({
     ccNum: new FormControl('', [Validators.pattern(/^\s*(?:[0-9]{16})\s*$/g), Validators.required]),
     ccHolder: new FormControl('', Validators.required),
@@ -19,14 +30,26 @@ export class CreditCardDetailsComponent implements OnInit {
     ccCvv: new FormControl('', [Validators.pattern(/^\s*(?:[0-9]{3})\s*$/g)]),
     ccAmt: new FormControl(null, [Validators.nullValidator, Validators.min(1), Validators.required])
   });
+  backdropLoader: boolean = false;
 
-  constructor(private store: Store<CCDetailsInitial>) { }
+  @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
 
   ngOnInit(): void {
     this.store.select(ccDetailsReducer.selectStateCCDetails)
-      .subscribe((data) => {
-        console.log(data);
+      .subscribe((data: { success: CCDetails }) => {
+        if (!!data.success.new) {
+          this.ngxLoaderService.stopAll();
+          console.log(data.success);
+          this.backdropLoader = true;
+          const toastrMethod = this.toasterService.success(`<h4 class="text-center pr-2"><i> SUCCESS!! </i></h4>`);
+          const navToSaveDetails = toastrMethod.onHidden.subscribe(() => {
+            this.ccService.sendCCDetailsSaveData(data.success);
+            this.router.navigateByUrl('/success');
+            navToSaveDetails.unsubscribe();
+          });
+        }
       });
+    this.toasterService.overlayContainer = this.toastContainer;
   }
 
   private expiryDateCheck(ctrl: AbstractControl): { dateErr: boolean } | null {
@@ -43,5 +66,6 @@ export class CreditCardDetailsComponent implements OnInit {
         ccExpDate: this.creditCardForm.controls.ccExpDate.value,
       }
     }));
+    this.ngxLoaderService.start();
   }
 }

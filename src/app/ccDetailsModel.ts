@@ -8,4 +8,5 @@ export interface CCDetails {
     ccExpDate: string;
     ccCvv: string;
     ccAmt: number;
+    new?: boolean;
 };

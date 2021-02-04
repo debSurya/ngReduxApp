@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { CCDetails } from '../ccDetailsModel';
 
@@ -10,7 +10,17 @@ export class CreditCardDetailsService {
 
   constructor() { }
 
+  private passCCDetailsSub = new BehaviorSubject<CCDetails | null>(null);
+
   saveCCDetails(ccDetails: CCDetails) {
-    return of({ data: JSON.parse(JSON.stringify({...ccDetails, new: true})) }).pipe(delay(2000));
+    return of({ data: { ...ccDetails, new: true } }).pipe(delay(1000));
+  }
+
+  sendCCDetailsSaveData(data: CCDetails) {
+    this.passCCDetailsSub.next(data);
+  }
+
+  getCCDetailsSaveData(): Observable<CCDetails | null> {
+    return this.passCCDetailsSub.asObservable();
   }
 }
